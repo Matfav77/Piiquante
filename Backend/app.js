@@ -18,9 +18,10 @@ app.use((req, res, next) => {
     next();
 })
 
+const authRouter = require("./routes/user");
 
+app.use("/api/auth", authRouter);
 
 app.listen(3000, () => {
     console.log("Listening on port 3000");
 })
-
