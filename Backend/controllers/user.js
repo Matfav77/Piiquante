@@ -4,12 +4,15 @@ const jwt = require("jsonwebtoken");
 const { findOne } = require("../models/user");
 
 exports.signup = async (req, res) => {
-    const { email, password } = req.body;
-    const hash = await bcrypt.hash(password, 10);
-    const newUser = new User({ email, password: hash });
-    newUser.save()
-        .then(() => { res.status(200).json({ message: "Utilisateur créé !" }) })
-        .catch(err => res.status(401).json({ err }))
+    try {
+        const { email, password } = req.body;
+        const hash = await bcrypt.hash(password, 10);
+        const newUser = new User({ email, password: hash });
+        await newUser.save();
+        res.status(200).json({ message: "Utilisateur créé !" })
+    } catch (error) {
+        res.status(401).json({ error })
+    }
 }
 
 exports.login = async (req, res) => {
