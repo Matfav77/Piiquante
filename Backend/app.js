@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const path = require("path");
 const express = require("express");
 const app = express();
 
@@ -19,8 +20,11 @@ app.use((req, res, next) => {
 })
 
 const authRouter = require("./routes/user");
+const sauceRouter = require("./routes/sauce")
 
 app.use("/api/auth", authRouter);
+app.use("/api/sauces", sauceRouter);
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
 app.listen(3000, () => {
     console.log("Listening on port 3000");
