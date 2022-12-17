@@ -34,6 +34,40 @@ exports.createSauce = async (req, res) => {
         await newSauce.save();
         res.status(201).json({ message: "Sauce créée avec succès !" })
     } catch (error) {
-        res.status(500).json({ error })
+        res.status(400).json({ error })
     }
 }
+
+exports.modifySauce = async (req, res) => {
+    try {
+        const updatedSauce = req.file ? {
+            ...JSON.parse(req.body.sauce),
+            imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+        } : { ...req.body };
+        const { id } = req.params;
+        const foundSauce = await Sauce.findById(id);
+        if (foundSauce.userId != req.auth.userId) { res.status(403).json({ message: "403: unauthorized request." }) }
+        else {
+            await Sauce.findByIdAndUpdate(id, updatedSauce);
+            res.status(200).json({ message: "Sauce modifiée !" })
+        }
+    } catch (error) {
+        res.status(400).json({ error })
+    }
+}
+
+exports.deleteSauce = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const foundSauce = await Sauce.findById(id);
+        if (foundSauce.userId !== req.auth.userId) {
+            res.status(403).json({ message: "403: unauthorized request." })
+        } else {
+            await Sauce.findByIdAndDelete(id);
+            res.status(201).json({ message: "Sauce deleted successfully" });
+        }
+    } catch (error) {
+        res.status(400).json({ error })
+    }
+}
+
