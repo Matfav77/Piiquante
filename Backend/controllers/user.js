@@ -2,6 +2,7 @@ const bcrypt = require("bcrypt");
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 const { findOne } = require("../models/user");
+require('dotenv').config();
 
 exports.signup = async (req, res) => {
     try {
@@ -28,7 +29,7 @@ exports.login = async (req, res) => {
                     userId: user._id,
                     token: jwt.sign(
                         { userId: user._id },
-                        'RANDOM_TOKEN_SECRET',
+                        process.env.TOKEN_KEY,
                         { expiresIn: '24h' }
                     )
                 })

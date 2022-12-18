@@ -2,8 +2,9 @@ const mongoose = require("mongoose");
 const path = require("path");
 const express = require("express");
 const app = express();
+require("dotenv").config();
 
-mongoose.connect("mongodb+srv://Matfav:0penClassrooms@cluster0.huhxfny.mongodb.net/?retryWrites=true&w=majority");
+mongoose.connect(`mongodb+srv://${process.env.DB_LOGIN}:${process.env.DB_PASSWORD}@cluster0.huhxfny.mongodb.net/?retryWrites=true&w=majority`);
 
 mongoose.connection.on("error", console.error.bind(console, "connection error:"));
 mongoose.connection.once("open", () => {
