@@ -46,7 +46,7 @@ exports.modifySauce = async (req, res) => {
         } : { ...req.body };
         const { id } = req.params;
         const foundSauce = await Sauce.findById(id);
-        if (foundSauce.userId != req.auth.userId) { res.status(403).json({ message: "403: unauthorized request." }) }
+        if (foundSauce.userId !== req.auth.userId) { res.status(403).json({ message: "403: unauthorized request." }) }
         else {
             await Sauce.findByIdAndUpdate(id, updatedSauce);
             res.status(200).json({ message: "Sauce modifiée !" })
@@ -71,3 +71,37 @@ exports.deleteSauce = async (req, res) => {
     }
 }
 
+exports.likeSauce = async (req, res) => {
+    try {
+        const userId = req.auth.userId;
+        const { id: sauceId } = req.params;
+        const foundSauce = await Sauce.findById(sauceId);
+        switch (req.body.like) {
+            case -1:
+                foundSauce.usersDisliked.push(userId);
+                foundSauce.dislikes++;
+                await Sauce.findByIdAndUpdate(sauceId, foundSauce);
+                res.status(201).json({ message: "Sauce disliked successfully" })
+                break;
+            case 0:
+                if (foundSauce.usersLiked.includes(userId)) {
+                    await Sauce.findByIdAndUpdate(sauceId, { usersLiked: foundSauce.usersLiked.filter(e => e != userId), likes: foundSauce.likes - 1 });
+                    res.status(200).json({ message: "Like cancelled successfully" })
+                } else {
+                    await Sauce.findByIdAndUpdate(sauceId, { usersDisliked: foundSauce.usersDisliked.filter(e => e != userId), dislikes: foundSauce.dislikes - 1 })
+                    res.status(200).json({ message: "Dislike cancelled successfully" })
+                }
+                break;
+            case 1:
+                foundSauce.usersLiked.push(userId);
+                foundSauce.likes++;
+                await Sauce.findByIdAndUpdate(sauceId, foundSauce);
+                res.status(201).json({ message: "Sauce liked successfully" })
+                break;
+            default: console.log("Invalid input")
+                break;
+        }
+    } catch (error) {
+        res.status(400).json({ error })
+    }
+}
