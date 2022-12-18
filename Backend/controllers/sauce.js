@@ -1,4 +1,5 @@
 const Sauce = require("../models/sauce");
+const fs = require("fs");
 const { findOne, findById } = require("../models/user");
 
 
@@ -46,8 +47,12 @@ exports.modifySauce = async (req, res) => {
         } : { ...req.body };
         const { id } = req.params;
         const foundSauce = await Sauce.findById(id);
-        if (foundSauce.userId !== req.auth.userId) { res.status(403).json({ message: "403: unauthorized request." }) }
+        if (foundSauce.userId !== req.auth.userId) res.status(403).json({ message: "403: unauthorized request." })
         else {
+            fs.unlink(`images/${foundSauce.imageUrl.split('/images/')[1]}`, (err) => {
+                if (err) throw err
+                console.log('image deleted successfully.');
+            })
             await Sauce.findByIdAndUpdate(id, updatedSauce);
             res.status(200).json({ message: "Sauce modifiée !" })
         }
@@ -63,6 +68,10 @@ exports.deleteSauce = async (req, res) => {
         if (foundSauce.userId !== req.auth.userId) {
             res.status(403).json({ message: "403: unauthorized request." })
         } else {
+            fs.unlink(`images/${foundSauce.imageUrl.split('/images/')[1]}`, (err) => {
+                if (err) throw err
+                console.log('image deleted successfully.');
+            })
             await Sauce.findByIdAndDelete(id);
             res.status(201).json({ message: "Sauce deleted successfully" });
         }
