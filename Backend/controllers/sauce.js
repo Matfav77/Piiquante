@@ -109,7 +109,7 @@ exports.likeSauce = async (req, res) => {
                 await Sauce.findByIdAndUpdate(sauceId, foundSauce);
                 res.status(201).json({ message: "Sauce liked successfully" })
                 break;
-            default: console.log("Invalid input")
+            default: res.status(400).json({ message: "Invalid input" })
                 break;
         }
     } catch (error) {
