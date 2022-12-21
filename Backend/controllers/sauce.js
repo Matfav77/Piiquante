@@ -89,25 +89,33 @@ exports.likeSauce = async (req, res) => {
         const foundSauce = await Sauce.findById(sauceId);
         switch (req.body.like) {
             case -1:
-                foundSauce.usersDisliked.push(userId);
-                foundSauce.dislikes++;
-                await Sauce.findByIdAndUpdate(sauceId, foundSauce);
-                res.status(201).json({ message: "Sauce disliked successfully" })
+                if (foundSauce.usersDisliked.includes(userId) || foundSauce.usersLiked.includes(userId)) {
+                    res.status(400).json({ message: "You have already liked or disliked this sauce." });
+                } else {
+                    foundSauce.usersDisliked.push(userId);
+                    foundSauce.dislikes++;
+                    await Sauce.findByIdAndUpdate(sauceId, foundSauce);
+                    res.status(201).json({ message: "Sauce disliked successfully" })
+                }
                 break;
             case 0:
                 if (foundSauce.usersLiked.includes(userId)) {
-                    await Sauce.findByIdAndUpdate(sauceId, { usersLiked: foundSauce.usersLiked.filter(e => e != userId), likes: foundSauce.likes - 1 });
+                    await Sauce.findByIdAndUpdate(sauceId, { $pull: { usersLiked: userId }, likes: foundSauce.likes - 1 });
                     res.status(200).json({ message: "Like cancelled successfully" })
                 } else {
-                    await Sauce.findByIdAndUpdate(sauceId, { usersDisliked: foundSauce.usersDisliked.filter(e => e != userId), dislikes: foundSauce.dislikes - 1 })
+                    await Sauce.findByIdAndUpdate(sauceId, { $pull: { usersDisliked: userId }, dislikes: foundSauce.dislikes - 1 })
                     res.status(200).json({ message: "Dislike cancelled successfully" })
                 }
                 break;
             case 1:
-                foundSauce.usersLiked.push(userId);
-                foundSauce.likes++;
-                await Sauce.findByIdAndUpdate(sauceId, foundSauce);
-                res.status(201).json({ message: "Sauce liked successfully" })
+                if (foundSauce.usersDisliked.includes(userId) || foundSauce.usersLiked.includes(userId)) {
+                    res.status(400).json({ message: "You have already liked or disliked this sauce." });
+                } else {
+                    foundSauce.usersLiked.push(userId);
+                    foundSauce.likes++;
+                    await Sauce.findByIdAndUpdate(sauceId, foundSauce);
+                    res.status(201).json({ message: "Sauce liked successfully" })
+                }
                 break;
             default: res.status(400).json({ message: "Invalid input" })
                 break;
