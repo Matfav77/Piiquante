@@ -33,7 +33,7 @@ exports.createSauce = async (req, res) => {
             userId: req.auth.userId
         });
         await newSauce.save();
-        res.status(201).json({ message: "Sauce créée avec succès !" })
+        res.status(201).json({ message: "Sauce created successfully!" })
     } catch (error) {
         res.status(400).json({ error })
     }
@@ -52,11 +52,11 @@ exports.modifySauce = async (req, res) => {
             if (req.file) {
                 fs.unlink(`images/${foundSauce.imageUrl.split('/images/')[1]}`, (err) => {
                     if (err) throw err
-                    console.log('image deleted successfully.');
+                    console.log('Image deleted successfully.');
                 })
             }
             await Sauce.findByIdAndUpdate(id, updatedSauce);
-            res.status(200).json({ message: "Sauce modifiée !" })
+            res.status(200).json({ message: "Sauce modified!" })
         }
     } catch (error) {
         res.status(400).json({ error })
@@ -72,7 +72,7 @@ exports.deleteSauce = async (req, res) => {
         } else {
             fs.unlink(`images/${foundSauce.imageUrl.split('/images/')[1]}`, (err) => {
                 if (err) throw err
-                console.log('image deleted successfully.');
+                console.log('Image deleted successfully.');
             })
             await Sauce.findByIdAndDelete(id);
             res.status(201).json({ message: "Sauce deleted successfully" });

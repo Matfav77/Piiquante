@@ -10,7 +10,7 @@ exports.signup = async (req, res) => {
         const hash = await bcrypt.hash(password, 10);
         const newUser = new User({ email, password: hash });
         await newUser.save();
-        res.status(200).json({ message: "Utilisateur créé !" })
+        res.status(200).json({ message: "User created!" })
     } catch (error) {
         res.status(401).json({ error })
     }
@@ -20,10 +20,10 @@ exports.login = async (req, res) => {
     try {
         const { email, password } = req.body;
         const user = await User.findOne({ email });
-        if (!user) return res.status(401).json({ message: "Paire identifiant/mot de passe invalide." })
+        if (!user) return res.status(401).json({ message: "Invalid login or password." })
         else {
             isValid = await bcrypt.compare(password, user.password)
-            if (!isValid) return res.status(401).json({ message: "Paire identifiant/mot de passe invalide." })
+            if (!isValid) return res.status(401).json({ message: "Invalid login or password." })
             else {
                 res.status(200).json({
                     userId: user._id,
