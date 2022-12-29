@@ -6,7 +6,7 @@ const { findOne, findById } = require("../models/user");
 exports.getAllSauces = async (req, res) => {
     try {
         const allSauces = await Sauce.find();
-        res.send(allSauces)
+        res.status(200).send(allSauces)
     } catch (error) {
         res.status(500).json({ error })
     }
@@ -16,7 +16,7 @@ exports.getOneSauce = async (req, res) => {
     try {
         const { id } = req.params;
         const foundSauce = await Sauce.findById(id);
-        res.send(foundSauce);
+        res.status(200).send(foundSauce);
     } catch (error) {
         res.status(500).json({ error })
     }
