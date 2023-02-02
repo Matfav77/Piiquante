@@ -1,3 +1,8 @@
+# Piiquante #
+
+For this project, the frontend was provided upfront, and the backend needed to be built from scratch, via a RESTful API using Node.js and Express.
+Full CRUD and authentication features.
+
 To Start Project :
 
 -   Backend directory : Run 'npm install'. Once done, run 'node app'. 
